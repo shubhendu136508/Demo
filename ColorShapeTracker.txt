@@ -1,0 +1,75 @@
+import in.ac.abes.care.utils.FrameDisplay;
+        import in.ac.abes.care.utils.Utils;
+        import org.opencv.core.*;
+        import org.opencv.highgui.Highgui;
+        import org.opencv.highgui.VideoCapture;
+        import org.opencv.imgproc.Imgproc;
+
+        import java.util.ArrayList;
+        import java.util.List;
+
+        public class ColorShapeTracker{
+            static{
+                System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+
+            }
+            public static void main( String[] args )
+            {   Mat greyMat = new Mat();
+                Mat filteredMat = new Mat();
+                Mat colorMat = new Mat();
+        Mat testMat = new Mat(3,30,CvType.CV_8UC3);
+        Mat kernel = Imgproc.getStructuringElement(Imgproc.MORPH_RECT ,new Size(11,11));
+        Mat frame = Highgui.imread("tigress.jpg", Highgui.CV_LOAD_IMAGE_COLOR);
+        colorMat = frame.clone();
+        FrameDisplay frameDisplay = new FrameDisplay("Video Feed");
+        FrameDisplay grayDisplay = new FrameDisplay("gray image");
+        FrameDisplay videoDisplay = new FrameDisplay("Video Display");
+        Scalar lowerBound = new Scalar(20,55,55);
+        Scalar upperBound = new Scalar(40,255,255);
+        frameDisplay.updateFrame(Utils.fromMatToBufferedImage(frame));
+        Imgproc.cvtColor(frame, frame, Imgproc.COLOR_BGR2GRAY);
+        Imgproc.threshold(frame, frame, 120, 255, Imgproc.THRESH_BINARY);
+        List<MatOfPoint> contours = new ArrayList<MatOfPoint>();
+        Imgproc.findContours(frame,contours,new Mat(),Imgproc.RETR_TREE,Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.drawContours(colorMat,contours,-1,new Scalar(0,255,0));
+        videoDisplay.updateFrame(Utils.fromMatToBufferedImage(colorMat));
+
+        Imgproc.cvtColor(frame,greyMat, Imgproc.COLOR_BGR2HSV);
+        grayDisplay.updateFrame(Utils.fromMatToBufferedImage(greyMat));
+
+//        Core.inRange(frame,lowerBound,upperBound,filteredMat);
+//
+//        grayDisplay.updateFrame(Utils.fromMatToBufferedImage(filteredMat));
+
+//        System.out.println(frame.cols());
+//        System.out.println(frame.rows());
+//        System.out.println(frame.channels());
+//        System.out.println(frame.depth());
+//        System.out.println(frame.size());
+//        System.out.println();
+//        System.out.println(testMat.cols());
+//        System.out.println(testMat.rows());
+//        System.out.println(testMat.channels());
+//        System.out.println(testMat.depth());
+//        System.out.println(testMat.size());
+//        VideoCapture videoCapture = new VideoCapture(0);
+//        if(!videoCapture.isOpened()) {
+//            System.out.println("Could not open capture device");
+//            return;
+//        }
+//
+//        for(int i=0;i<1000;i++){
+//            videoCapture.read(frame);
+//            if(frame.empty()) {
+//                continue;
+//            }
+//            Core.putText(frame,"Shubhendu",new Point(100,400),Core.FONT_HERSHEY_COMPLEX,1,new Scalar(255,0,0));
+//           Core.inRange(frame,lowerBound,upperBound,filteredMat);
+//            videoDisplay.updateFrame(Utils.fromMatToBufferedImage(frame));
+//            grayDisplay.updateFrame(Utils.fromMatToBufferedImage(filteredMat));
+
+            //Imgproc.erode(filteredMat,filteredMat,kernel);
+            //frameDisplay.updateFrame(Utils.fromMatToBufferedImage(filteredMat));
+//        }
+    }
+}
